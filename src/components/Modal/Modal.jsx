@@ -1,39 +1,35 @@
-import { Component } from 'react';
 import { StyledModal, StyledOverlay } from './Modal.styled';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
-export class Modal extends Component {
-  componentDidMount() {
+export const Modal = ({ modalImage, altModal, handleToggleModal }) => {
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === 'Escape') {
+        handleToggleModal();
+      }
+    };
     document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
 
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
-  componentWillUnmount() {
-    document.body.style.overflow = 'auto';
-
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-  handleKeyDown = e => {
-    if (e.key === 'Escape') {
-      this.props.handleToggleModal();
-    }
-  };
-  onBackDropClick = e => {
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleToggleModal]);
+  const onBackDropClick = e => {
     if (e.currentTarget === e.target) {
-      this.props.handleToggleModal();
+      handleToggleModal();
     }
   };
-
-  render() {
-    return (
-      <StyledOverlay onClick={this.onBackDropClick}>
-        <StyledModal>
-          <img src={this.props.modalImage} alt={this.props.altModal} />
-        </StyledModal>
-      </StyledOverlay>
-    );
-  }
-}
+  return (
+    <StyledOverlay onClick={onBackDropClick}>
+      <StyledModal>
+        <img src={modalImage} alt={altModal} />
+      </StyledModal>
+    </StyledOverlay>
+  );
+};
 
 Modal.propTypes = {
   handleToggleModal: PropTypes.func,

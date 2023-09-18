@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -10,43 +10,38 @@ import {
 } from './SearchBar.styled';
 import { toast } from 'react-toastify';
 
-export class SearchBar extends Component {
-  state = {
-    value: '',
-  };
+export const SearchBar = ({ onSubmit }) => {
+  const [value, setValue] = useState('');
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    if (this.state.value.trim() === '') {
+    if (value.trim() === '') {
       return toast.error('Search field is empty');
     }
-    this.props.onSubmit(this.state.value);
+    onSubmit(value);
   };
-  handleChangeInput = ({ target }) => {
-    this.setState({ value: target.value });
+  const handleChangeInput = ({ target }) => {
+    setValue(target.value);
   };
+  return (
+    <StyledHeader>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledButton type="submit" onClick={handleSubmit}>
+          <StyledSpan>Search</StyledSpan>
+        </StyledButton>
 
-  render() {
-    return (
-      <StyledHeader>
-        <StyledForm onSubmit={this.handleSubmit}>
-          <StyledButton type="submit" onClick={this.handleSubmit}>
-            <StyledSpan>Search</StyledSpan>
-          </StyledButton>
-
-          <StyledInput
-            onChange={this.handleChangeInput}
-            value={this.state.value}
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </StyledForm>
-      </StyledHeader>
-    );
-  }
-}
+        <StyledInput
+          onChange={handleChangeInput}
+          value={value}
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+      </StyledForm>
+    </StyledHeader>
+  );
+};
 
 SearchBar.propTypes = {
   onSubmit: PropTypes.func,
